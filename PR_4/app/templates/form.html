@@ -1,0 +1,27 @@
+{% from "_render_field.html" import render_field %}
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html"  as wtf %}
+
+{% block title %}
+   Form 
+{% endblock %}
+
+{% block content %}
+ <div class="text-center text-danger">
+ 	<h1> Заповніть будь ласка форму!</h1>
+ </div> 
+
+ <div class="container">
+ 	<form action="{{url_for('form')}}" method="POST" class="form-horizontal">
+ 		<dl>
+ 			{{ form.csrf_token }}
+ 			<h4>{{ wtf.form_field(form.username)}}
+ 				{{ wtf.form_field(form.password )}}
+ 				{{ wtf.form_field(form.email )}}
+ 		        {{ wtf.form_field(form.recaptcha )}}</h4>
+			<input class = "btn btn-primary btn-lg btn-block" type="submit" value="Відправити">
+		</dl>
+	</form>
+ </div>
+{% endblock %}	
+
