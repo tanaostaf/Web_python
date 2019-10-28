@@ -16,9 +16,8 @@ app.config['TESTING'] = True
 
 
 class LoginForm(FlaskForm):
-	username = StringField('Ведіть імя: ', validators = [InputRequired('Імя користувача є обовязкове!'), Length(min = 5, max= 10, message = 'Must be ....')])
-	password = PasswordField('Введіть пароль: ', validators = [InputRequired('Пароль є необхідний!')])
-		#AnyOf(values = ['password','secret'])])
+	username = StringField('Ведіть імя: ', validators = [InputRequired('Імя користувача є обовязкове!'), Length(min = 5, max= 10, message = 'Must be from 5 to 10 symb.')])
+	password = PasswordField('Введіть пароль: ', validators = [InputRequired('Пароль є необхідний!'), AnyOf(values = ['password','secret'])])
 	email = StringField('Email: ', validators = [DataRequired(), Length(min=6, max=35)] )
 	recaptcha = RecaptchaField()
 
