@@ -1,7 +1,9 @@
 from datetime import datetime
-from flaskblog import db, login_manager
+from flaskblog import db, login_manager, bcrypt
 from flask_login import UserMixin
+from wtforms import BooleanField
 from hashlib import md5
+from wtforms import widgets, TextAreaField
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -21,11 +23,22 @@ class User(db.Model, UserMixin):
 	posts = db.relationship('Post', backref='author', lazy=True)
 	about = db.Column(db.String(140))
 	last__seen = db.Column(db.DateTime, default=datetime.utcnow)
+	admin = db.Column(db.Boolean())
+	notes = db.Column(db.UnicodeText)
 	followed = db.relationship(
 		'User', secondary=followers,
 		primaryjoin=(followers.c.follower_id == id),
 		secondaryjoin=(followers.c.followed_id == id),
 		backref=db.backref('followers', lazy='dynamic'), lazy='dynamic')
+
+	def __init__(self, username, password,email, notes='', admin=False):
+		self.username = username
+		self.admin = admin
+		self.password = password
+		self.email = email
+		self.notes = notes
+	def is_admin(self):
+		return self.admin
 	def __repr__(self):
 		return f"User('{self.username}', '{self.email}', '{self.image_file}')"
 
@@ -68,3 +81,11 @@ class Post(db.Model):
 	
 	def __repr__(self):
 		return f"Post('{self.title}', '{self.date_posted}')"
+
+class CKTextAreaWidget(widgets.TextArea):
+	def __call__(self, field, **kwargs):
+		kwargs.setdefault('class_', 'ckeditor')
+		return super(CKTextAreaWidget, self).__call__(field, **kwargs)
+
+class CKTextAreaField(TextAreaField):
+	widget = CKTextAreaWidget()
